@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "DATABASE URL"
+}
+
+model Guild {
+  id String @id @default(uuid())
+  guild_id String @unique
+  whitelisted Boolean @default(false)
+  capmonster_api_key String @default("")
+  embed_config EmbedConfig?
+  discord_tokens DiscordToken[]
+  proxies Proxy[]
+  whitelisted_users WhitelistedUser[]
+  payment_options PaymentOption[]
+  customer_role String @default("")
+}
+
+model EmbedConfig {
+  id String @id @default(uuid())
+  author String @default("")
+  author_url String @default("")
+  author_icon_url String @default("")
+  thumbnail_url String @default("")
+  image_url String @default("")
+  footer String @default("")
+  footer_icon_url String @default("")
+  guild Guild? @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  guild_id String @unique
+}
+
+model WhitelistedUser {
+  id String @id @default(uuid())
+  user_id String
+  guild Guild? @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  guild_id String
+}
+
+model PaymentOption {
+  id String @id @default(uuid())
+  name String
+  value String
+  guild Guild? @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  guild_id String
+}
+
+model DiscordToken {
+  id String @id @default(uuid())
+  token String
+  guild Guild? @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  guild_id String
+  boosts_available Int @default(2)
+  using Boolean @default(false)
+}
+
+model Proxy {
+  id String @id @default(uuid())
+  proxy String
+  guild Guild? @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  guild_id String
+}
